@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://ck4weuiwm62x8"]
+
+[ext_resource type="Script" uid="uid://w74ijknft5ln" path="res://addons/addon_toggler/scripts/one_addon_monitor_toggler.gd" id="1_jllt5"]
+
+[node name="OneAddonMonitorToggler" type="HBoxContainer"]
+script = ExtResource("1_jllt5")
+
+[node name="CheckBox" type="CheckBox" parent="."]
+layout_mode = 2
+text = "Test"
+
+[connection signal="toggled" from="CheckBox" to="." method="_on_check_box_toggled"]

@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://b80ux6ndiwd1a"]
+
+[ext_resource type="Script" uid="uid://mrl7tcqayu5p" path="res://addons/addon_toggler/scripts/one_addon_active_toggler.gd" id="1_25r3p"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_25r3p"]
+bg_color = Color(0.21, 0.24, 0.29, 1)
+
+[node name="OneAddonActiveToggler" type="HBoxContainer"]
+script = ExtResource("1_25r3p")
+
+[node name="CheckBox" type="CheckBox" parent="."]
+layout_mode = 2
+text = "Test"
+
+[node name="Panel" type="Panel" parent="."]
+custom_minimum_size = Vector2(2, 10)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_25r3p")
+
+[connection signal="toggled" from="CheckBox" to="." method="_on_check_box_toggled"]

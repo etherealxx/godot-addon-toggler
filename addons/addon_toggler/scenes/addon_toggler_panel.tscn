@@ -1,0 +1,65 @@
+[gd_scene load_steps=4 format=3 uid="uid://ccvseql2gmp6k"]
+
+[ext_resource type="Script" uid="uid://dujg82msu0muq" path="res://addons/addon_toggler/scripts/addon_toggler_panel.gd" id="1_d73li"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_themt"]
+bg_color = Color(0.147, 0.168, 0.203, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.21, 0.24, 0.29, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_52ubc"]
+bg_color = Color(0.1155, 0.132, 0.1595, 1)
+border_width_bottom = 2
+border_color = Color(0.27451, 0.439216, 0.584314, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="AddonTogglerPanel" type="PanelContainer"]
+offset_right = 212.0
+offset_bottom = 24.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_themt")
+script = ExtResource("1_d73li")
+
+[node name="UIHbox" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="AddonTitle" type="Label" parent="UIHbox" groups=["dont_free"]]
+unique_name_in_owner = true
+layout_mode = 2
+text = "AddonToggler"
+
+[node name="OptionBtn" type="Button" parent="UIHbox" groups=["dont_free"]]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_52ubc")
+text = "⚙️"
+
+[node name="VSeparator" type="VSeparator" parent="UIHbox" groups=["dont_free"]]
+layout_mode = 2
+
+[node name="SettingsPopup" type="PopupPanel" parent="."]
+size = Vector2i(177, 100)
+
+[node name="SettingsVbox" type="VBoxContainer" parent="SettingsPopup"]
+unique_name_in_owner = true
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 282.0
+offset_bottom = 96.0
+
+[node name="AddonToShowLabel" type="Label" parent="SettingsPopup/SettingsVbox" groups=["dont_free"]]
+layout_mode = 2
+text = "Addons to Show the Shortcut Above"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="SettingsPopup/SettingsVbox" groups=["dont_free"]]
+layout_mode = 2
+
+[connection signal="pressed" from="UIHbox/OptionBtn" to="." method="_on_option_btn_pressed"]
+[connection signal="toggled" from="UIHbox/OptionBtn" to="." method="_on_option_btn_toggled"]
