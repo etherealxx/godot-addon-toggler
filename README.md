@@ -1,4 +1,4 @@
-# godot-addon-toggler
+# Addon Toggler for Godot 4.4+
 Faster addon toggling for better addon development
 
 ### Install steps
