@@ -70,22 +70,23 @@ func get_addons_on_shortcut_box() -> Array:
 	return addons
 
 func _on_addon_shortcut_toggled(addon_name : String, is_active : bool):
+	var addon_node_name = addon_name.validate_node_name()
 	if is_active:
 		var new_active_toggler : Container = addon_active_toggler_scene.instantiate()
 		var editor_base_color = self.get_theme_color("base_color", "Editor")
 		
 		new_active_toggler.set_panel_color(editor_base_color)
 		#new_toggler.addon_active_toggled.connect(_on_addon_active_toggled)
-		new_active_toggler.set_label_text(addon_name)
 		#new_active_toggler.individual_addon_toggled.connect()
 		new_active_toggler.set_checkbox_active(EditorInterface.is_plugin_enabled(addon_name))
-		new_active_toggler.name = addon_name
+		new_active_toggler.set_addon_name(addon_name)
+		new_active_toggler.name = addon_node_name
 		
 		ui_hbox.add_child(new_active_toggler)
 		
 	else:
-		if ui_hbox.has_node(addon_name):
-			var active_toggler = ui_hbox.get_node(addon_name)
+		if ui_hbox.has_node(addon_node_name):
+			var active_toggler = ui_hbox.get_node(addon_node_name)
 			active_toggler.queue_free()
 
 #func _on_addon_active_toggled(addon_name: String, toggled_on : bool):
