@@ -11,3 +11,11 @@ Faster addon toggling for better addon development
 ### Screenshots
 
 ![](addons/addon_toggler/docs/addon_example.jpg)
+
+### Alternatives
+
+<sup>(i didn't know these exist when i made mine😭 I made it in just 3-4 hours though, at midnight)</sup>
+
+[Plugin Reloader](https://godotengine.org/asset-library/asset/3293) <br/>
+[Godot Plugin Refresher](https://godotengine.org/asset-library/asset/248) <br/>
+[Plugin Refresher](https://godotengine.org/asset-library/asset/1807) (GPLv3) <br/>
