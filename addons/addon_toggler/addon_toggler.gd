@@ -28,9 +28,22 @@ func _ready() -> void:
 		
 		add_control_to_container(CONTAINER_TOOLBAR, addon_toggler_node)
 		var editor_title_bar = addon_toggler_node.get_parent()
+
+		#editor_run_bar.add_sibling(addon_toggler_node)
+
+		# move addon position to the left of play button
+		var editor_run_bar : Node
+		for child in editor_title_bar.get_children():
+			if "EditorRunBar" in child.name:
+				editor_run_bar = child
+				break
 		
-		# move it to the left of play button
-		editor_title_bar.move_child(addon_toggler_node, -3) 
+		var run_bar_index = editor_run_bar.get_index()
+		editor_title_bar.move_child(addon_toggler_node, run_bar_index)
+		
+		#print("---")
+		#for child in editor_title_bar.get_children():
+			#print(child.name)
 
 func _on_setting_button_pressed():
 	var dir = DirAccess.open("res://addons")
