@@ -1,7 +1,6 @@
 @tool
 extends PanelContainer
 
-signal setting_pressed
 signal addon_shortcut_toggled(addon_name : String, is_active : bool)
 
 var addon_monitor_toggler_scene = load("uid://ck4weuiwm62x8")
@@ -32,17 +31,23 @@ func set_panel_border_color(color : Color):
 func set_setting_btn_color(color : Color):
 	var panel : StyleBoxFlat = %OptionBtn.get("theme_override_styles/normal")
 	panel.bg_color = color
-
-#func _on_option_btn_toggled(toggled_on: bool) -> void:
-	#if toggled_on:
+	
 func _on_option_btn_pressed() -> void:
-	setting_pressed.emit() # parse all addon names names
+	var dir = DirAccess.open("res://addons")
+	var addon_name_list_temp = dir.get_directories()
+	var addon_name_status_dict : Dictionary[String, bool]
+	
+	# get a;; addon name and enabled status
+	for addon_dir_name : String in addon_name_list_temp:
+		dir = DirAccess.open("res://addons".path_join(addon_dir_name))
+		# fix this later to not rely on text string
+		if (addon_dir_name != "addon_toggler") and dir.file_exists("plugin.cfg"):
+			addon_name_status_dict[addon_dir_name] = EditorInterface.is_plugin_enabled(addon_dir_name)
 
-func open_setting_and_parse(_addon_status_dict : Dictionary[String, bool]):
-	addon_status_dict = _addon_status_dict
 	var addons_on_shortcut : Array = get_addons_on_shortcut_box()
 	
-	for addon_name in addon_status_dict.keys():
+	# make checkbox for every addon
+	for addon_name in addon_name_status_dict.keys():
 		var new_toggler : Container = addon_monitor_toggler_scene.instantiate()
 
 		new_toggler.set_label_text(addon_name)

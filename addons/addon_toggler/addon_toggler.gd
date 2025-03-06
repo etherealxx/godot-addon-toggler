@@ -12,9 +12,6 @@ func _ready() -> void:
 	#print("addon activated")
 	if Engine.is_editor_hint():
 		
-		addon_toggler_node.setting_pressed.connect(_on_setting_button_pressed)
-		#addon_toggler_node.addon_shortcut_toggled.connect(_on_addon_shortcut_toggled)
-		
 		# setup theme to match editor theme
 		addon_toggler_node.set_theme( EditorInterface.get_editor_theme() )
 		var title_font = addon_toggler_node.get_theme_font("title", "EditorFonts")
@@ -44,20 +41,6 @@ func _ready() -> void:
 		#print("---")
 		#for child in editor_title_bar.get_children():
 			#print(child.name)
-
-func _on_setting_button_pressed():
-	var dir = DirAccess.open("res://addons")
-	#var addons_on_shortcut : Array = addon_toggler_node.get_addons_on_shortcut_box()
-	var addon_name_list_temp = dir.get_directories()
-	var addon_name_status_dict : Dictionary[String, bool]
-	for addon_dir_name : String in addon_name_list_temp:
-		# fix this later to not rely on text string
-		if (addon_dir_name != "addon_toggler"): # and (addon_dir_name not in addons_on_shortcut):
-			addon_name_status_dict[addon_dir_name] = EditorInterface.is_plugin_enabled(addon_dir_name)
-	addon_toggler_node.open_setting_and_parse(addon_name_status_dict)
-	
-#func _on_addon_shortcut_toggled(addon_name : String, is_active : bool):
-	#pass
 
 func _exit_tree() -> void:
 	if Engine.is_editor_hint():
