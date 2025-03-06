@@ -2,9 +2,13 @@
 extends HBoxContainer
 
 var addon_name : String
-var is_properly_set_up := false
+var is_properly_set_up := false # prevents feedback loop
 
 #signal addon_active_toggled(addon_name: String, toggled_on : bool)
+
+func set_panel_color(color : Color):
+	var panel : StyleBoxFlat = $Panel.get("theme_override_styles/panel")
+	panel.bg_color = color
 
 func set_addon_name(_name : String):
 	addon_name = _name
@@ -19,6 +23,7 @@ func _on_check_box_toggled(toggled_on: bool) -> void:
 		EditorInterface.set_plugin_enabled(addon_name, toggled_on)
 		#addon_active_toggled.emit($Label.text, toggled_on)
 
-func set_panel_color(color : Color):
-	var panel : StyleBoxFlat = $Panel.get("theme_override_styles/panel")
-	panel.bg_color = color
+func recheck_active_status():
+	is_properly_set_up = false
+	$CheckBox.button_pressed = EditorInterface.is_plugin_enabled(addon_name) 
+	is_properly_set_up = true

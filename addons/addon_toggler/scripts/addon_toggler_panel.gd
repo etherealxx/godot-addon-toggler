@@ -1,6 +1,8 @@
 @tool
 extends PanelContainer
 
+const THIS_ADDON_FOLDER_NAME := "addon_toggler"
+
 signal addon_shortcut_toggled(addon_name : String, is_active : bool)
 
 var addon_monitor_toggler_scene = load("uid://ck4weuiwm62x8")
@@ -11,10 +13,11 @@ var addon_active_toggler_scene = load("uid://b80ux6ndiwd1a")
 @onready var settings_vbox: VBoxContainer = %SettingsVbox
 @onready var ui_hbox: HBoxContainer = $UIHbox
 
-var addon_status_dict : Dictionary[String, bool]
+var addon_name_status_dict : Dictionary[String, bool]
 
 func _ready() -> void:
 	settings_popup.close_requested.connect(_on_settings_popup_close)
+	ProjectSettings.settings_changed.connect(_on_project_settings_changed)
 	$SettingsPopup.hide()
 
 func set_title_font(font : Font):
@@ -31,18 +34,31 @@ func set_panel_border_color(color : Color):
 func set_setting_btn_color(color : Color):
 	var panel : StyleBoxFlat = %OptionBtn.get("theme_override_styles/normal")
 	panel.bg_color = color
-	
+
+func iterate_dir_find_addon(current_dir: String, dir_name_list : PackedStringArray):
+	for addon_dir_name : String in dir_name_list:
+		var dir = DirAccess.open(current_dir.path_join(addon_dir_name))
+		if addon_dir_name != THIS_ADDON_FOLDER_NAME and dir != null:
+			if dir.file_exists("plugin.cfg"):
+				addon_name_status_dict[addon_dir_name] = EditorInterface.is_plugin_enabled(addon_dir_name)
+			else:
+				# recursively find addon on folder that isn't an addon
+				var subdir_name_list_temp = dir.get_directories()
+				if subdir_name_list_temp.size() > 0:
+					iterate_dir_find_addon(dir.get_current_dir(), subdir_name_list_temp)
+
+func get_addons_on_shortcut_box() -> Array:
+	var addons = Array()
+	for node in ui_hbox.get_children():
+		if !node.is_in_group("dont_free"):
+			addons.append(node.name)
+	return addons
+
 func _on_option_btn_pressed() -> void:
+	addon_name_status_dict.clear()
 	var dir = DirAccess.open("res://addons")
 	var addon_name_list_temp = dir.get_directories()
-	var addon_name_status_dict : Dictionary[String, bool]
-	
-	# get a;; addon name and enabled status
-	for addon_dir_name : String in addon_name_list_temp:
-		dir = DirAccess.open("res://addons".path_join(addon_dir_name))
-		# fix this later to not rely on text string
-		if (addon_dir_name != "addon_toggler") and dir.file_exists("plugin.cfg"):
-			addon_name_status_dict[addon_dir_name] = EditorInterface.is_plugin_enabled(addon_dir_name)
+	iterate_dir_find_addon("res://addons", addon_name_list_temp)
 
 	var addons_on_shortcut : Array = get_addons_on_shortcut_box()
 	
@@ -67,13 +83,6 @@ func _on_settings_popup_close():
 		if !child.is_in_group("dont_free"):
 			child.queue_free()
 
-func get_addons_on_shortcut_box() -> Array:
-	var addons = Array()
-	for node in ui_hbox.get_children():
-		if !node.is_in_group("dont_free"):
-			addons.append(node.name)
-	return addons
-
 func _on_addon_shortcut_toggled(addon_name : String, is_active : bool):
 	var addon_node_name = addon_name.validate_node_name()
 	if is_active:
@@ -81,8 +90,6 @@ func _on_addon_shortcut_toggled(addon_name : String, is_active : bool):
 		var editor_base_color = self.get_theme_color("base_color", "Editor")
 		
 		new_active_toggler.set_panel_color(editor_base_color)
-		#new_toggler.addon_active_toggled.connect(_on_addon_active_toggled)
-		#new_active_toggler.individual_addon_toggled.connect()
 		new_active_toggler.set_checkbox_active(EditorInterface.is_plugin_enabled(addon_name))
 		new_active_toggler.set_addon_name(addon_name)
 		new_active_toggler.name = addon_node_name
@@ -94,5 +101,7 @@ func _on_addon_shortcut_toggled(addon_name : String, is_active : bool):
 			var active_toggler = ui_hbox.get_node(addon_node_name)
 			active_toggler.queue_free()
 
-#func _on_addon_active_toggled(addon_name: String, toggled_on : bool):
-	#EditorInterface.set_plugin_enabled(addon_name, toggled_on)
+func _on_project_settings_changed():
+	for addon_active_toggler in ui_hbox.get_children():
+		if !addon_active_toggler.is_in_group("dont_free"):
+			addon_active_toggler.recheck_active_status()
